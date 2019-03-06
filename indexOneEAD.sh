@@ -6,10 +6,10 @@ TYPE="$1"
 
 rvm 2.4.1@arclight
 
-echo "$(date) $line Indexing $TYPE.xml" >> /data/indexing-logs/index.log
-cd /home/gw234478/arclight-UAlbany
+echo "$(date) $line Indexing $TYPE.xml" >> /opt/lib/indexing-logs/index.log
+cd /opt/lib/arclight-UAlbany
 
 AREA=${TYPE//[0-9.]/}
 echo $AREA/$TYPE.xml
 
-bundle exec rake arclight:index FILE=/home/gw234478/collections/$AREA/$TYPE.xml REPOSITORY_ID=$AREA SOLR_URL=https://solr.library.albany.edu:8984/solr/arclight-testing
+bundle exec rake arclight:index FILE=/opt/lib/collections/$AREA/$TYPE.xml REPOSITORY_ID=$AREA SOLR_URL=https://solr.library.albany.edu:8984/solr/arclight-prod
