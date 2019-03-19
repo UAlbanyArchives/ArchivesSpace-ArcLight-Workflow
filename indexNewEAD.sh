@@ -6,9 +6,9 @@ TYPE="$1"
 
 rvm 2.4.1@arclight
 
-echo "$(date) $line Indexing $TYPE" >> /data/indexing-logs/index.log
-cd /home/gw234478/arclight-UAlbany
+echo "$(date) $line Export $TYPE" >> /opt/lib/indexing-logs/index.log
+cd /var/www/arclight-UAlbany
 
-find /home/gw234478/collections/$TYPE -mtime -1 -type f -name '*.xml' -exec \
-bundle exec rake arclight:index SOLR_URL=https://solr.library.albany.edu:8984/solr/arclight-testing REPOSITORY_ID=$TYPE FILE={} \
-&>> /data/indexing-logs/index.log ';'
+find /opt/lib/collections/$TYPE -mtime -1 -type f -name '*.xml' -exec \
+bundle exec rake arclight:index SOLR_URL=https://solr.library.albany.edu:8984/solr/arclight-prod REPOSITORY_ID=$TYPE FILE={} \
+&>> /opt/lib/indexing-logs/index.log ';'
