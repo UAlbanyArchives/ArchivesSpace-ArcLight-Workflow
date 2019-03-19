@@ -149,7 +149,7 @@ print ("\tChecking for object created since " + str(solrTime))
 query = "https://solr.library.albany.edu:8984/solr/hyrax/select?q=human_readable_type_sim:Dao&fq=system_create_dtsi:[" + str(solrTime) + "%20TO%20NOW]"
 
 #Hyrax Update CSV Path
-hyraxCSV = "/opt/lib/processNewUploads/newHyraxAccessions.tsv"
+hyraxCSV = "/media/Library/ESPYderivatives/processNewUploads/newHyraxAccessions.tsv"
    
 #get Hyrax login data
 configFile = os.path.join(os.path.expanduser("~"), ".hyrax.yml")
