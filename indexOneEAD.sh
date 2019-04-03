@@ -7,7 +7,7 @@ TYPE="$1"
 rvm 2.4.1@arclight
 
 echo "$(date) $line Indexing $TYPE.xml" >> /opt/lib/indexing-logs/index.log
-cd /opt/lib/arclight-UAlbany
+cd /var/www/arclight-UAlbany
 
 AREA=${TYPE//[0-9.]/}
 echo $AREA/$TYPE.xml

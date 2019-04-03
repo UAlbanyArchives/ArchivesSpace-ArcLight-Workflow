@@ -105,10 +105,14 @@ def addASpaceDAO(refID, newURI, visibility):
         
         #attach new digital object instance to archival object
         daoLink = {"jsonmodel_type": "instance", "digital_object": {"ref": daoURI}, "instance_type": "digital_object", \
-                    "is_representative": True}                        
+                    "is_representative": False}                        
         item["instances"].append(daoLink)
         updateItem = client.post(item["uri"], json=item)
-        print ("\t\t\t\tAttached Instance --> " + str(updateItem.status_code))
+        if updateItem.status_code != 200:
+            print ("\t\t\t\tFailed to attach Instance --> " + str(updateItem.status_code))
+            print ("\t\t\t" + str(updateItem.text))
+        else:
+            print ("\t\t\t\tAttached Instance --> " + str(updateItem.status_code))
         
         #update resource
         resourceURI = item["resource"]["ref"]
