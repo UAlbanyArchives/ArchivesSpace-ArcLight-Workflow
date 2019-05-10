@@ -16,8 +16,8 @@ parser = ET.XMLParser(remove_blank_text=True)
 
 
 #static pages directory on public webserver
-staticDir = "\\\\romeo\\wwwroot\\eresources\\static"
-dataDir = os.path.join(__location__, "staticData")
+staticDir = "/media/server/browse"
+dataDir = os.path.join(__location__, "collections", "staticData")
 
 #load basic HTML template file
 templateFile = os.path.join(staticDir, "templates", "template.html")
