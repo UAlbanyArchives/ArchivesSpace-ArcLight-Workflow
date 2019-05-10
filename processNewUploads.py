@@ -148,7 +148,7 @@ except:
 	startTime = 0
 
 solrTime = datetime.utcfromtimestamp(startTime).strftime('%Y-%m-%dT%H:%M:%SZ')
-#solrTime = "2019-04-01T00:00:00Z"
+solrTime = "2019-04-16T02:00:10Z"
 print ("\tChecking for object created since " + str(solrTime))
 query = "https://solr.library.albany.edu:8984/solr/hyrax/select?q=human_readable_type_sim:Dao&fq=system_modified_dtsi:[" + str(solrTime) + "%20TO%20NOW]"
 
@@ -201,16 +201,22 @@ else:
             collectionList = []
             count = 0
             for object in newObjects:
-                if not object["workflow_state_name_ssim"][0] == "deposited":
-                    count += 1
-                    print ("\tObject " + str(count) + " of " + str(numFound) + " is still under review.")
-                elif "accession_tesim" in object.keys():
+                if "accession_tesim" in object.keys():
                     count += 1
                     print ("\tObject " + str(count) + " of " + str(numFound) + " already has an accession ID.")
                 else:
-                    colID = object["collection_number_tesim"][0]
-                    if not colID in collectionList:            
-                        collectionList.append(colID)
+                    if "workflow_state_name_ssim" in object.keys():
+                        if not object["workflow_state_name_ssim"][0] == "deposited":
+                            count += 1
+                            print ("\tObject " + str(count) + " of " + str(numFound) + " is still under review.")
+                        else:
+                            colID = object["collection_number_tesim"][0]
+                            if not colID in collectionList:            
+                                collectionList.append(colID)
+                    else:
+                        colID = object["collection_number_tesim"][0]
+                        if not colID in collectionList:            
+                            collectionList.append(colID)
             
             count = 0
             for colID in collectionList:
@@ -224,8 +230,14 @@ else:
                         print ("\t\tObject " + str(count) + " of " + str(numFound) + " already has an accession ID.")
                     elif object["collection_number_tesim"][0] == colID:
                         count += 1
-                        if object["workflow_state_name_ssim"][0] == "deposited":
-                                                        
+                        checkUnderReview = True
+                        if "workflow_state_name_ssim" in object.keys():
+                            if object["workflow_state_name_ssim"][0] == "deposited":
+                                checkUnderReview = False
+                        else:
+                            checkUnderReview = False
+                        
+                        if checkUnderReview == False:
                             model = object["has_model_ssim"][0]
                             uri = model.lower() + "s/" + object["id"]
                             print ("\t\tReading https://archives.albany.edu/concern/" + uri + "?format=json")

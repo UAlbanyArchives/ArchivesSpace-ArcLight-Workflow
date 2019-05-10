@@ -6,7 +6,7 @@ TYPE="$1"
 
 rvm 2.4.1@arclight
 
-echo "$(date) $line Indexing $TYPE.xml" >> /opt/lib/indexing-logs/index.log
+echo "$(date) $line Indexing $TYPE.xml" >> /media/SPE/indexing-logs/index.log
 cd /var/www/arclight-UAlbany
 
 AREA='ndpa'
