@@ -5,11 +5,16 @@ import dacs
 import time
 import csv
 import shutil
+from git import Repo
+from datetime import datetime
 from subprocess import Popen, PIPE, STDOUT
 import asnake.logging as logging
 from asnake.client import ASnakeClient
 #from asnake.aspace import ASpace
 
+print (str(datetime.now()) + " Exporting Records from ArchivesSpace")
+
+print ("\tConnecting to ArchivesSpace")
 client = ASnakeClient()
 client.authorize()
 logging.setup_logging(stream=sys.stdout, level='INFO')
@@ -18,6 +23,7 @@ logging.setup_logging(stream=sys.stdout, level='INFO')
 
 __location__ = os.path.dirname(os.path.realpath(__file__))
 
+lastExportTime = time.time()
 try:
     timePath = os.path.join(__location__, "lastExport.txt")
     with open(timePath, 'r') as timeFile:
@@ -25,6 +31,8 @@ try:
         timeFile.close()
 except:
     startTime = 0
+humanTime = datetime.utcfromtimestamp(startTime).strftime('%Y-%m-%d %H:%M:%S')
+print ("\tChecking for collections updated since " + humanTime)
     
 output_path = "/media/SPE/collections"
 pdf_path = "/media/server/browse/pdf"
@@ -50,27 +58,42 @@ for line in csv.reader(subjectFile, delimiter="|"):
     subjectData.append(line)
 subjectFile.close
 
-print ("Checking for collections updated since last export...")
+print ("\tQuerying ArchivesSpace...")
 modifiedList = client.get("repositories/2/resources?all_ids=true&modified_since=" + str(startTime)).json()
+if len(modifiedList) > 0:
+    print ("\tFound " + str(len(modifiedList)) + " new records!")
+    print ("\tArchivesSpace URIs: " + str(modifiedList))
+else:
+    print ("\tFound no new records.")
 for colID in modifiedList:
     collection = client.get("repositories/2/resources/" + str(colID)).json()
-    if collection["publish"] == True: 
+    if collection["publish"] != True: 
+        print ("\t\tSkipping " + collection["title"] + " because it is unpublished")
+    else:
+        print ("\t\tExporting " + collection["title"] + " " + "(" + collection["id_0"] + ")")
     
         try:
             normalName = collection["finding_aid_title"]
         except:
-            print ("error with " + collection["id_0"])
+            print ("\t\tError: incorrect Finding Aid Title (sort title)")
             normalName = collection["finding_aid_title"]
         
-        checkAbstract = False
+        #DACS notes/fields to check before exporting
+        dacsNotes = ["ead_id", "abstract", "acqinfo", "bioghist", "scopecontent", "arrangement", "creator"]
+        checkDACS = {}
+        for dacsNote in dacsNotes:
+            checkDACS[dacsNote] = False
         checkAccessRestrict = False
-        checkDACS = [False, False, False, False, False, False]
+        abstract = ""
         accessRestrict = ""
         
+        if "ead_id" in collection.keys():
+            checkDACS["ead_id"] = True
+            
         for note in collection["notes"]:
             if "type" in note.keys():
                 if note["type"] == "abstract":
-                    checkAbstract = True
+                    checkDACS["abstract"] = True
                     abstract = note["content"][0].replace("\n", "&#13;&#10;")
                 if note["type"] == "accessrestrict":
                     checkAccessRestrict = True
@@ -78,24 +101,24 @@ for colID in modifiedList:
                         accessRestrict = "&#13;&#10;" + subnote["content"].replace("\n", "&#13;&#10;")
                     accessRestrict = accessRestrict.strip()
                 if note["type"] == "acqinfo":
-                    checkDACS[0] = True
+                    checkDACS["acqinfo"] = True
                 if note["type"] == "bioghist":
-                    checkDACS[1] = True
+                    checkDACS["bioghist"] = True
                 if note["type"] == "scopecontent":
-                    checkDACS[2] = True
+                    checkDACS["scopecontent"] = True
                 if note["type"] == "arrangement":
-                    checkDACS[3] = True
+                    checkDACS["arrangement"] = True
                     
                     
         for agent in collection["linked_agents"]:
             if agent["role"] == "creator":
-                checkDACS[4] = True
+                checkDACS["creator"] = True
         
-        if "ead_id" in collection.keys():
-            checkDACS[5] = True
-                
-        if checkAbstract == True:
-            print ("exporting " + collection["title"])
+        checkExport = all(value == True for value in checkDACS.values())
+        if checkDACS["abstract"] != True:
+            print ("\t\tFailed to update browse pages: Collection has no abstract.")
+            print ("\t\tFailed to export collection: Collection has no abstract.")
+        else:
             date = ""
             for dateData in collection["dates"]:
                 if "expression" in dateData.keys():
@@ -115,7 +138,7 @@ for colID in modifiedList:
             for existingCollection in collectionData:
                 if existingCollection[0] == ID:
                     existingCollection[0] = ID
-                    existingCollection[1] = all(checkDACS)
+                    existingCollection[1] = checkExport
                     existingCollection[2] = normalName
                     existingCollection[3] = date
                     existingCollection[4] = extent
@@ -124,7 +147,7 @@ for colID in modifiedList:
                     existingCollection[7] = accessRestrict
                     checkCollection = True
             if checkCollection == False:
-                collectionData.append([ID, all(checkDACS), normalName, date, extent, abstract, collection["restrictions"], accessRestrict])
+                collectionData.append([ID, checkExport, normalName, date, extent, abstract, collection["restrictions"], accessRestrict])
 
             for subjectRef in collection["subjects"]:
                 subject = client.get(subjectRef["ref"]).json()
@@ -137,83 +160,56 @@ for colID in modifiedList:
                                     existingSubject.append(ID)
                                 checkSubject = True
                         if checkSubject == False:
-                            subjectData.append([subject["title"], subjectRef["ref"], ID])
-
-
-            if all(checkDACS) == True:
-                resourceID = collection["uri"].split("/resources/")[1]
-                eadFile = client.get("repositories/2/resource_descriptions/" + resourceID + ".xml")
-                
-                try:
-                    pdfFile = client.get("repositories/2/resource_descriptions/" + resourceID + ".pdf")
-                    pdfFile = AS.exportPDF(session, repo, collection, pdf_path, loginData)
-                    print ("    " + ID + " exported successfully.")
-                except:
-                    errorNote = "Error converting collection: " + ID
-                    print (errorNote)
-                    file = open(os.path.join(__location__, "collectionErrors.log"), "a")
-                    file.write(errorNote)
-                    file.close()
-                apapDir = os.path.join(output_path, "apap")
-                ndpaDir = os.path.join(output_path, "ndpa")
-                mssDir = os.path.join(output_path, "mss")
-                gerDir = os.path.join(output_path, "ger")
-                uaDir = os.path.join(output_path, "ua")
-                if not os.path.isdir(apapDir):
-                    os.mkdir(apapDir)
-                if not os.path.isdir(ndpaDir):
-                    os.mkdir(ndpaDir)
-                if not os.path.isdir(mssDir):
-                    os.mkdir(mssDir)
-                if not os.path.isdir(gerDir):
-                    os.mkdir(gerDir)
-                if not os.path.isdir(uaDir):
-                    os.mkdir(uaDir)
-                for newEAD in os.listdir(output_path):
-                    if newEAD.endswith(".xml"):
-                        newEadFile = os.path.join(output_path, newEAD)
-                        if newEAD.startswith("ger"):
-                            shutil.copy2(newEadFile, gerDir)
-                        if newEAD.startswith("ua"):
-                            shutil.copy2(newEadFile, uaDir)
-                        if newEAD.startswith("mss"):
-                            shutil.copy2(newEadFile, mssDir)
-                        if newEAD.startswith("apap"):
-                            if newEAD.split(".")[0] in ndpaList:
-                                shutil.copy2(newEadFile, ndpaDir)
-                            else:
-                                shutil.copy2(newEadFile, apapDir)
-                        if os.path.isfile(newEadFile):
-                            os.remove(newEadFile)
+                            subjectData.append([subject["title"], subjectRef["ref"], ID])    
+            if checkExport != True:
+                print ("\t\tFailed to export collection: ")
+                for checkNote in checkDACS.keys():
+                    if checkDACS[checkNote] == False:
+                        print ("\t\t\t" + checkNote + " is missing")
             else:
-                print ("Collection incomplete:")
-                if checkDACS[0] == False:
-                    print ("    missing: acqinfo")
-                if checkDACS[1] == False:
-                    print ("    missing: bioghist")
-                if checkDACS[2] == False:
-                    print ("    missing: scopecontent")
-                if checkDACS[3] == False:
-                    print ("    missing: arrangement")
-                if checkDACS[4] == False:
-                    print ("    missing: creator")
-                if checkDACS[5] == False:
-                    print ("    missing: ead_id")
+
+                #sorting collection
+                if ID.startswith("ger"):
+                    eadDir = os.path.join(output_path, "ger")
+                if ID.startswith("ua"):
+                    eadDir = os.path.join(output_path, "ua")
+                if ID.startswith("mss"):
+                    eadDir = os.path.join(output_path, "mss")
+                if ID.startswith("apap"):
+                    if ID.split(".")[0] in ndpaList:
+                        eadDir = os.path.join(output_path, "ndpa")
+                    else:
+                        eadDir = os.path.join(output_path, "apap")
+                if not os.path.isdir(eadDir):
+                    os.mkdir(eadDir)            
+            
+                resourceID = collection["uri"].split("/resources/")[1]
+                print ("\t\t\tExporting EAD")
+                eadResponse = client.get("repositories/2/resource_descriptions/" + resourceID + ".xml")
+                eadFile = os.path.join(eadDir, ID + ".xml")
+                f = open(eadFile, 'w', encoding='utf-8')
+                f.write(eadResponse.text)
+                f.close()
+                print ("\t\t\tSuccess!")
+                
+                print ("\t\t\tExporting PDF")
+                pdfResponse = client.get("repositories/2/resource_descriptions/" + resourceID + ".pdf")
+                pdfFile = os.path.join(pdf_path, ID + ".pdf")
+                f = open(pdfFile, 'wb')
+                f.write(pdfResponse.content)
+                f.close()
+                print ("\t\t\tSuccess!")
 
 
 #commit changes to git repo
-print ("Commiting changes...")
-addCmd = ["git", "-C", output_path, "add", "."]
-gitAdd = Popen(addCmd, stdin=PIPE)
-gitAdd.communicate()
-commitCmd = ["git", "-C", output_path, "commit", "-m", "modified collections exported from ArchivesSpace"]
-gitCommit = Popen(commitCmd, stdin=PIPE)
-gitCommit.communicate()
-pushCmd = ["git", "-C", output_path, "push", "origin", "master"]
-gitPush = Popen(pushCmd, stdout=PIPE, stderr=PIPE)
-gitPush.communicate()
+print ("\tCommiting changes to Github...")
+repo = Repo(output_path)
+repo.git.add(update=True)
+repo.git.commit("-m", "modified collections exported from ArchivesSpace")
+repo.git.push('origin', 'master')
 
-                
+
+print ("\tWriting static data back to files.")
 #write new collection data back to file
 collectionFile = open(os.path.join(staticData, "collections.csv"), "w", newline='', encoding='utf-8')
 writer = csv.writer(collectionFile, delimiter='|')
@@ -226,16 +222,9 @@ writer = csv.writer(subjectFile, delimiter='|')
 writer.writerows(subjectData)
 subjectFile.close()
 
-timePath = os.path.join(__location__, "lastExport.txt")
-with open(timePath, 'w') as timeFile:
-    timeFile.write(str(time.time()).split(".")[0])
-    timeFile.close()
 
-    
 
-msg = "Calling script to generate static pages..."
-print (msg)
-
+print ("\tCalling script to generate static pages...")
 staticPages = os.path.join(__location__, "staticPages.py")
 
 #build command list
@@ -248,4 +237,12 @@ if len(stdout) > 0:
 if len(stderr) > 0:
     print ("ERROR: staticPages.py failed. " + str(stderr))
 else:
-    print ("Export Complete")
+    print ("\tStatic browse pages generate successfully!")
+    
+
+endTimeHuman = datetime.utcfromtimestamp(lastExportTime).strftime('%Y-%m-%d %H:%M:%S')
+print ("\tFinished! Last Export time is " + endTimeHuman)
+timePath = os.path.join(__location__, "lastExport.txt")
+with open(timePath, 'w') as timeFile:
+    timeFile.write(str(lastExportTime).split(".")[0])
+    timeFile.close()
