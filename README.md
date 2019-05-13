@@ -5,7 +5,7 @@ This repo contains the overnight exporting and indexing scripts for the [M.E. Gr
 
 ## High-Level Overview
 
-![Diagram of how these script work to keep different services interconnected.](https://archives.albany.edu/static/web/images/overnightScripts.png)
+![Diagram of how these script work to keep different services interconnected.](overnightScripts.png)
 
 ## What Each Script Does
 
