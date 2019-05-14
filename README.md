@@ -27,7 +27,7 @@ Uploading Digital Objects to Hyrax
 
 ![Screenshot of adding a new work in Hyrax](/img/screen3.png)
 
-5.       For most cases, select “Digital Archival Objects” and then the “Create Work” button.
+5. For most cases, select “Digital Archival Objects” and then the “Create Work” button.
 
 ![Screenshot of adding a new DAO in Hyrax](/img/screen4.png)
 
