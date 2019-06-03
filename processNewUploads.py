@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 import asnake.logging as logging
 from asnake.client import ASnakeClient
-from packages import ArchivalInformationPackage
+from packages.AIP import ArchivalInformationPackage
 client = ASnakeClient()
 client.authorize()
 
