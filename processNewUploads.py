@@ -174,7 +174,8 @@ else:
             for colID in collectionList:
                 accession = colID + "_" + str(shortuuid.uuid())
                 print ("\tBuilding AIP for " + accession)
-                AIP = ArchivalInformationPackage(colID, accession)
+                AIP = ArchivalInformationPackage()
+                AIP.create(colID, accession)
                 
                 for object in newObjects:
                     if "accession_tesim" in object.keys():
