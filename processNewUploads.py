@@ -261,6 +261,9 @@ else:
                 print ("\tWriting checksums...")
                 AIP.bag.save(manifests=True)
                 print ("\tAIP Saved!")
+                
+                print ("Logging ingest to DigitizationExtentTracker...")
+                AIP.extentLog("/media/SPE/DigitizationExtentTracker/DigitizationExtentTracker.xlsx")
 
 
 timePath = os.path.join(__location__, "lastCheckedUploads.txt")
