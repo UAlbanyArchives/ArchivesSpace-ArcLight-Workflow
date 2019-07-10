@@ -41,7 +41,7 @@ staticData = os.path.join(output_path, "staticData")
 #Get list of NDPA IDs
 ndpaListPath = os.path.join(output_path, "ndpaList.txt")
 ndpaListFile = open(ndpaListPath, "r")
-ndpaList = ndpaListFile.readlines()
+ndpaList = ndpaListFile.read().splitlines() 
 ndpaListFile.close()
 
 #read existing exported collection data
