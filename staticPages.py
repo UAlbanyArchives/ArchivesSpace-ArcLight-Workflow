@@ -160,7 +160,7 @@ def makeAbstract(collection, pageContent):
 	extent = collection[4]
 	abstract = collection[5]
 	if collection[1] == "True":
-		link = "https://archives.albany.edu/collections/catalog/" + id.replace(".", "-")
+		link = "https://archives.albany.edu/description/catalog/" + id.replace(".", "-")
 		
 		panel = makePanel(id, title, date, extent, abstract, link)
 		collectionAnchor = ET.Element("a")
@@ -186,7 +186,7 @@ def makeLink(collection, pageContent):
 	abstract = collection[5]
 	if collection[1] == "True":
 		#link = "https://meg.library.albany.edu:8443/archive/view?docId=" + id + ".xml"
-		link = "https://archives.albany.edu/collections/catalog/" + id.replace(".", "-")
+		link = "https://archives.albany.edu/description/catalog/" + id.replace(".", "-")
 	else:
 		if id.startswith("apap"):
 			link = "https://archives.albany.edu/browse/apap.html#" + id
