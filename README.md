@@ -2,10 +2,17 @@
 This repo contains documentation and scripts for how the [M.E. Grenander Department of Special Collections & Archives](library.albany.edu/archive/) connects [ArchivesSpace](https://github.com/archivesspace/archivesspace), [ArcLight](https://github.com/sul-dlss/arclight), and [Hyrax](https://github.com/samvera/hyrax) and keeps everything synced together. It contains:
 
 * Documentation for uploading digital object in Hyrax using existing 
-
 * Overnight exporting and indexing scripts that update data between each service
 
-  
+
+
+Updated documentation for this repo is on our documentation site:
+
+* [Overnight Export and Indexing Scripts](https://wiki.albany.edu/display/SCA/Overnight+Export+and+Indexing+Scripts)
+
+* [Reading Overnight Export Logs](https://wiki.albany.edu/display/SCA/Reading+Overnight+Export+Logs)
+
+
 
 ## Uploading Digital Objects to Hyrax with Existing Description
 
