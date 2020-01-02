@@ -35,7 +35,7 @@ humanTime = datetime.utcfromtimestamp(startTime).strftime('%Y-%m-%d %H:%M:%S')
 print ("\tChecking for collections updated since " + humanTime)
     
 output_path = "/media/SPE/collections"
-pdf_path = "/media/server/browse/pdf"
+pdf_path = "/media/Library/SPEwww/browse/pdf"
 staticData = os.path.join(output_path, "staticData")
 
 #Get list of NDPA IDs

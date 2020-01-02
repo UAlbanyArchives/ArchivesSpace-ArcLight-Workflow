@@ -4,8 +4,8 @@ import json
 import requests
 import urllib.request
 
-asBG = "/media/server/browse/img/aspaceBG.jpg"
-descFile = "/media/server/browse/js/bgDesc.json"
+asBG = "/media/Library/SPEwww/browse/img/aspaceBG.jpg"
+descFile = "/media/Library/SPEwww/browse/js/bgDesc.json"
 
 
 r = requests.get('http://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=8')

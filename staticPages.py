@@ -16,7 +16,7 @@ parser = ET.XMLParser(remove_blank_text=True)
 
 
 #static pages directory on public webserver
-staticDir = "/media/server/browse"
+staticDir = "/media/Library/SPEwww/browse"
 dataDir = "/media/SPE/collections/staticData"
 
 #load basic HTML template file
