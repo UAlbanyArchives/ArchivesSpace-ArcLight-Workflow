@@ -8,6 +8,7 @@ then
     [ -s "/usr/local/rvm/scripts/rvm" ] && . "/usr/local/rvm/scripts/rvm"
     rvm 2.6.3@website
     cd /var/www/spe_website && jekyll build
+    cp /var/www/spe_website/_site/index.html /var/www/hyrax-UAlbany/public
 else
     true
 fi
