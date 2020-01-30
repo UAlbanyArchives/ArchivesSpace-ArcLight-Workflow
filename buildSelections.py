@@ -3,7 +3,7 @@ import json
 import requests
 
 
-def buildSelections(colID, refID=None, filter=None, verbose=False):
+def buildSelections(colID, refID=None, filter=None, date=False, verbose=False):
 
     
     collection = []
@@ -43,12 +43,28 @@ def buildSelections(colID, refID=None, filter=None, verbose=False):
             obj["thumb"] = "https://archives.albany.edu" + item["thumbnail_path_ss"]
             obj["url"] = "https://archives.albany.edu/concern/" + item["has_model_ssim"][0].lower() + "s/" + item["id"]
             
-            collection.append(obj)
+            if date:
+                if not obj["date"].lower() == "undated":
+                    if obj["date"].lower().startswith("ca."):
+                        objDate = obj["date"].split(" ")[1]
+                    else:
+                        if "-" in obj["date"]:
+                            objDate = obj["date"].split("-")[0]
+                        else:
+                            objDate = obj["date"].split(" ")[0]
+                    print (objDate)
+                    try:
+                        if int(objDate) < int(date):
+                            collection.append(obj)
+                    except:
+                        print ("Date Error: " + objDate)
+            else:
+                collection.append(obj)
         if r.json()["response"]["pages"]["last_page?"] == False:
             getPage(page + 1, collection, url)
 
     getPage(page, collection, url)
-
+        
         
     #print (collection)
     sortedTitle = sorted(collection, key = lambda i: i['title'].split(" ")[0])
@@ -66,7 +82,8 @@ if __name__ == '__main__':
     argParse.add_argument("colID", help="ID for a package in Processing directory.")
     argParse.add_argument("-id", help="Optional ref_id for components below the collection level.", default=None)
     argParse.add_argument("-f", "--filter", help="Hyrax filter to limit results, such as \"f[resource_type_sim][]=Periodical\"", default=None)
+    argParse.add_argument("-d", "--date", help="Only return items prior to a certain year of creation.", default=None)
     #argParse.add_argument("-v", "--verbose", help="lists all files written.", default=False)
     args = argParse.parse_args()
     
-    buildSelections(args.colID, args.id, args.filter, True)
+    buildSelections(args.colID, args.id, args.filter, args.date, True)
