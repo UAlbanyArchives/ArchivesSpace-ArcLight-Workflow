@@ -204,7 +204,7 @@ for colID in modifiedList:
 #commit changes to git repo
 print ("\tCommiting changes to Github...")
 repo = Repo(output_path)
-repo.git.add(update=True)
+repo.git.add('.')
 repo.git.commit("-m", "modified collections exported from ArchivesSpace")
 repo.git.push('origin', 'master')
 
