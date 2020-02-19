@@ -12,4 +12,4 @@ cd /var/www/arclight-UAlbany
 AREA='ndpa'
 echo $AREA/$TYPE.xml
 
-bundle exec rake arclight:index FILE=/opt/lib/collections/$AREA/$TYPE.xml REPOSITORY_ID=$AREA SOLR_URL=https://solr.library.albany.edu:8984/solr/arclight-prod
+bundle exec rake arclight:index FILE=/opt/lib/collections/$AREA/$TYPE.xml REPOSITORY_ID=$AREA SOLR_URL=https://solr.library.albany.edu:8984/solr/arclight1
