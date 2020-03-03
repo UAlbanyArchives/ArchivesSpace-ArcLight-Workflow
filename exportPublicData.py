@@ -228,7 +228,7 @@ print ("\tCalling script to generate static pages...")
 staticPages = os.path.join(__location__, "staticPages.py")
 
 #build command list
-staticCmd = ["python", staticPages]
+staticCmd = ["python3", staticPages]
 makeStatic = Popen(staticCmd, stdout=PIPE, stderr=PIPE)
 stdout, stderr = makeStatic.communicate()
 if len(stdout) > 0:
