@@ -1,10 +1,12 @@
 import os
 import json
 import requests
-
+from asnake.client import ASnakeClient
 
 def buildSelections(colID, refID=None, filter=None, date=False, verbose=False):
 
+    client = ASnakeClient()
+    client.authorize()
     
     collection = []
     page = 1
@@ -40,8 +42,17 @@ def buildSelections(colID, refID=None, filter=None, date=False, verbose=False):
             obj = {}
             obj["title"] = item["title_tesim"][0]
             obj["date"] = item["date_created_tesim"][0]
+            #print (item)
+            ref_id = item["archivesspace_record_tesim"][0]
             obj["thumb"] = "https://archives.albany.edu" + item["thumbnail_path_ss"]
             obj["url"] = "https://archives.albany.edu/concern/" + item["has_model_ssim"][0].lower() + "s/" + item["id"]
+            
+            record = client.get("repositories/2/find_by_id/archival_objects?ref_id[]=" + ref_id).json()
+            ao = client.get(record["archival_objects"][0]["ref"]).json()
+            dateNormal = ao["dates"][0]["begin"]
+            if "end" in ao["dates"][0].keys():
+                dateNormal = dateNormal + "/" + ao["dates"][0]["end"]
+            obj["date_normal"] = dateNormal
             
             if date:
                 if not obj["date"].lower() == "undated":
@@ -68,7 +79,7 @@ def buildSelections(colID, refID=None, filter=None, date=False, verbose=False):
         
     #print (collection)
     sortedTitle = sorted(collection, key = lambda i: i['title'].split(" ")[0])
-    sortedCollection = sorted(sortedTitle, key = lambda i: i['date'].split(" ")[0])
+    sortedCollection = sorted(sortedTitle, key = lambda i: i['date_normal'].split(" ")[0])
     print (len(sortedCollection))
 
     with open(outFile, 'w', encoding='utf-8', newline='') as f:
