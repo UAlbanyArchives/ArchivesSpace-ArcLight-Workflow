@@ -49,10 +49,14 @@ def buildSelections(colID, refID=None, filter=None, date=False, verbose=False):
             
             record = client.get("repositories/2/find_by_id/archival_objects?ref_id[]=" + ref_id).json()
             ao = client.get(record["archival_objects"][0]["ref"]).json()
+            print (ao["ref_id"])
             dateNormal = ao["dates"][0]["begin"]
             if "end" in ao["dates"][0].keys():
                 dateNormal = dateNormal + "/" + ao["dates"][0]["end"]
-            obj["date_normal"] = dateNormal
+            if "undated" in ao["dates"][0]["expression"].lower():
+                obj["date_normal"] = "9999"
+            else:
+                obj["date_normal"] = dateNormal
             
             if date:
                 if not obj["date"].lower() == "undated":
