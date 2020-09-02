@@ -35,6 +35,7 @@ humanTime = datetime.utcfromtimestamp(startTime).strftime('%Y-%m-%d %H:%M:%S')
 print ("\tChecking for collections updated since " + humanTime)
     
 output_path = "/media/SPE/collections"
+#output_path = "/media/SPE/collections-test"
 pdf_path = "/media/Library/SPEwww/browse/pdf"
 staticData = os.path.join(output_path, "staticData")
 
@@ -192,17 +193,25 @@ for colID in modifiedList:
                 f.close()
                 print ("\t\t\tSuccess!")
                 
-                print ("\t\t\tExporting PDF")
-                pdfResponse = client.get("repositories/2/resource_descriptions/" + resourceID + ".pdf")
-                pdfFile = os.path.join(pdf_path, ID + ".pdf")
-                f = open(pdfFile, 'wb')
-                f.write(pdfResponse.content)
-                f.close()
+                print ("\t\t\tConverting PDF")
+                #pdfResponse = client.get("repositories/2/resource_descriptions/" + resourceID + ".pdf")
+                #pdfFile = os.path.join(pdf_path, ID + ".pdf")
+                #f = open(pdfFile, 'wb')
+                #f.write(pdfResponse.content)
+                #f.close()
+                pdfCmd = ["java", "-jar", "/opt/lib/ead2pdf/ead2pdf.jar", eadFile, pdf_path]
+                makePDF = Popen(pdfCmd, stdout=PIPE, stderr=PIPE)
+                stdout, stderr = makePDF.communicate()
+                if len(stdout) > 0:
+                    print (stdout)
+                if len(stderr) > 0:
+                    print (stderr)
                 print ("\t\t\tSuccess!")
 
 
 #commit changes to git repo
 print ("\tCommiting changes to Github...")
+#print ("test only")
 repo = Repo(output_path)
 repo.git.add('.')
 repo.git.commit("-m", "modified collections exported from ArchivesSpace")
@@ -228,6 +237,8 @@ print ("\tCalling script to generate static pages...")
 staticPages = os.path.join(__location__, "staticPages.py")
 
 #build command list
+print ("test only")
+
 staticCmd = ["python3", staticPages]
 makeStatic = Popen(staticCmd, stdout=PIPE, stderr=PIPE)
 stdout, stderr = makeStatic.communicate()
@@ -238,6 +249,7 @@ if len(stderr) > 0:
     print ("ERROR: staticPages.py failed. " + str(stderr))
 else:
     print ("\tStatic browse pages generate successfully!")
+
     
 
 endTimeHuman = datetime.utcfromtimestamp(lastExportTime).strftime('%Y-%m-%d %H:%M:%S')

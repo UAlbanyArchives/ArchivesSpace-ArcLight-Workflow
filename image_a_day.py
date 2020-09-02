@@ -8,17 +8,18 @@ asBG = "/media/Library/SPEwww/browse/img/aspaceBG.jpg"
 descFile = "/media/Library/SPEwww/browse/js/bgDesc.json"
 
 
-r = requests.get('http://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=8')
+r = requests.get('https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=8')
 
 imageData = r.json()["images"][0]
-url = "http://www.bing.com" + imageData["url"]
+url = "https://www.bing.com" + imageData["url"]
 desc = imageData["copyright"]
+title = imageData["title"]
 if "(" in desc:
 	desc = desc.split("(")[0].strip()
 moreDetails = imageData["copyrightlink"]
 
 urllib.request.urlretrieve(url, asBG)
 
-data = {"description": desc, "link": moreDetails}
+data = {"description": desc, "link": moreDetails, "title": title}
 with open(descFile, 'w') as outfile:
     json.dump(data, outfile)
