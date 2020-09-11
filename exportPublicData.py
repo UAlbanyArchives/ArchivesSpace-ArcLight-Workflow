@@ -186,7 +186,8 @@ for colID in modifiedList:
             
                 resourceID = collection["uri"].split("/resources/")[1]
                 print ("\t\t\tExporting EAD")
-                eadResponse = client.get("repositories/2/resource_descriptions/" + resourceID + ".xml")
+                params = {"include_daos": True}
+                eadResponse = client.get("repositories/2/resource_descriptions/" + resourceID + ".xml", params=params)
                 eadFile = os.path.join(eadDir, ID + ".xml")
                 f = open(eadFile, 'w', encoding='utf-8')
                 f.write(eadResponse.text)
@@ -194,11 +195,12 @@ for colID in modifiedList:
                 print ("\t\t\tSuccess!")
                 
                 print ("\t\t\tConverting PDF")
-                #pdfResponse = client.get("repositories/2/resource_descriptions/" + resourceID + ".pdf")
-                #pdfFile = os.path.join(pdf_path, ID + ".pdf")
-                #f = open(pdfFile, 'wb')
-                #f.write(pdfResponse.content)
-                #f.close()
+                pdfResponse = client.get("repositories/2/resource_descriptions/" + resourceID + ".pdf")
+                pdfFile = os.path.join(pdf_path, ID + ".pdf")
+                f = open(pdfFile, 'wb')
+                f.write(pdfResponse.content)
+                f.close()
+                """
                 pdfCmd = ["java", "-jar", "/opt/lib/ead2pdf/ead2pdf.jar", eadFile, pdf_path]
                 makePDF = Popen(pdfCmd, stdout=PIPE, stderr=PIPE)
                 stdout, stderr = makePDF.communicate()
@@ -206,6 +208,7 @@ for colID in modifiedList:
                     print (stdout)
                 if len(stderr) > 0:
                     print (stderr)
+                """
                 print ("\t\t\tSuccess!")
 
 
