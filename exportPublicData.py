@@ -73,15 +73,17 @@ for colID in modifiedList:
     else:
         print ("\t\tExporting " + collection["title"] + " " + "(" + collection["id_0"] + ")")
     
+        checkDACS = {}
         try:
             normalName = collection["finding_aid_title"]
+            checkDACS["finding_aid_title"] = True
         except:
             print ("\t\tError: incorrect Finding Aid Title (sort title)")
             normalName = collection["finding_aid_title"]
+            checkDACS["finding_aid_title"] = False
         
         #DACS notes/fields to check before exporting
         dacsNotes = ["ead_id", "abstract", "acqinfo", "bioghist", "scopecontent", "arrangement", "creator"]
-        checkDACS = {}
         for dacsNote in dacsNotes:
             checkDACS[dacsNote] = False
         checkAccessRestrict = False
@@ -195,20 +197,21 @@ for colID in modifiedList:
                 print ("\t\t\tSuccess!")
                 
                 print ("\t\t\tConverting PDF")
-                pdfResponse = client.get("repositories/2/resource_descriptions/" + resourceID + ".pdf")
-                pdfFile = os.path.join(pdf_path, ID + ".pdf")
-                f = open(pdfFile, 'wb')
-                f.write(pdfResponse.content)
-                f.close()
-                """
-                pdfCmd = ["java", "-jar", "/opt/lib/ead2pdf/ead2pdf.jar", eadFile, pdf_path]
+                #pdfResponse = client.get("repositories/2/resource_descriptions/" + resourceID + ".pdf")
+                #pdfFile = os.path.join(pdf_path, ID + ".pdf")
+                #f = open(pdfFile, 'wb')
+                #f.write(pdfResponse.content)
+                #f.close()
+                
+                pdfCmd = ["java", "-jar", "/opt/lib/ead2pdf/ead2pdf.jar", eadFile, os.path.join(pdf_path, resourceID + ".pdf")]
+                #print (" ".join(pdfCmd))
                 makePDF = Popen(pdfCmd, stdout=PIPE, stderr=PIPE)
                 stdout, stderr = makePDF.communicate()
                 if len(stdout) > 0:
                     print (stdout)
                 if len(stderr) > 0:
                     print (stderr)
-                """
+                
                 print ("\t\t\tSuccess!")
 
 
