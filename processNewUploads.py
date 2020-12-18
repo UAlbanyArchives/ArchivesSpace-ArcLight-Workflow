@@ -102,7 +102,7 @@ except:
 solrTime = datetime.utcfromtimestamp(startTime).strftime('%Y-%m-%dT%H:%M:%SZ')
 #solrTime = "2019-04-16T02:00:10Z"
 print ("\tChecking for object created since " + str(solrTime))
-query = "https://solr.library.albany.edu:8984/solr/hyrax/select?q=human_readable_type_sim:Dao&fq=system_modified_dtsi:[" + str(solrTime) + "%20TO%20NOW]"
+query = "https://solr2020.library.albany.edu:8984/solr/hyrax/select?q=human_readable_type_sim:Dao&fq=system_modified_dtsi:[" + str(solrTime) + "%20TO%20NOW]"
 
 #Hyrax Update CSV Path
 hyraxCSV = "/media/Library/ESPYderivatives/processNewUploads/newHyraxAccessions.tsv"
