@@ -79,7 +79,7 @@ for colID in modifiedList:
             checkDACS["finding_aid_title"] = True
         except:
             print ("\t\tError: incorrect Finding Aid Title (sort title)")
-            normalName = collection["finding_aid_title"]
+            normalName = collection["title"]
             checkDACS["finding_aid_title"] = False
         
         #DACS notes/fields to check before exporting
@@ -203,7 +203,7 @@ for colID in modifiedList:
                 #f.write(pdfResponse.content)
                 #f.close()
                 
-                pdfCmd = ["java", "-jar", "/opt/lib/ead2pdf/ead2pdf.jar", eadFile, os.path.join(pdf_path, resourceID + ".pdf")]
+                pdfCmd = ["java", "-jar", "/opt/lib/ead2pdf/ead2pdf.jar", eadFile, os.path.join(pdf_path, ID + ".pdf")]
                 #print (" ".join(pdfCmd))
                 makePDF = Popen(pdfCmd, stdout=PIPE, stderr=PIPE)
                 stdout, stderr = makePDF.communicate()
