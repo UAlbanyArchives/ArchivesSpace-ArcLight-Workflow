@@ -69,7 +69,11 @@ def buildSelections(colID, refID=None, filter=None, date=False, verbose=False):
                             objDate = obj["date"].split(" ")[0]
                     print (objDate)
                     try:
-                        if int(objDate) < int(date):
+			if "-" in date:
+			    if int(objDate) >= int(date.split("-")[0]) and int(objDate) <= int(date.split("-")[1]):
+			        collection.append(obj)
+			else:
+                            if int(objDate) < int(date):
                             collection.append(obj)
                     except:
                         print ("Date Error: " + objDate)
