@@ -12,6 +12,6 @@ rvm 2.6.5@arclight
 cd ~/arclight-UAlbany
 export REPOSITORY_ID=$TYPE
 
-find /media/SPE/collections/$TYPE -type f -name '*.xml' -exec \
+find /media/Library/SPE_Automated/collections/$TYPE -type f -name '*.xml' -exec \
 bundle exec traject -u https://solr2020.library.albany.edu:8984/solr/$CORE -i xml \
 -c ~/.rvm/gems/ruby-2.6.5@arclight/bundler/gems/arclight-f9b61c2cf12c/lib/arclight/traject/ead2_config.rb {} ';'
