@@ -263,7 +263,7 @@ else:
                 print ("\tAIP Saved!")
                 
                 print ("Logging ingest to DigitizationExtentTracker...")
-                AIP.extentLog("/media/SPE/DigitizationExtentTracker/DigitizationExtentTracker.xlsx")
+                AIP.extentLog("/media/Library/SPE_Automated/DigitizationExtentTracker/DigitizationExtentTracker.xlsx")
 
 
 timePath = os.path.join(__location__, "lastCheckedUploads.txt")

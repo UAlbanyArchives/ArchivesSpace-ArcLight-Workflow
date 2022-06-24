@@ -34,8 +34,8 @@ except:
 humanTime = datetime.utcfromtimestamp(startTime).strftime('%Y-%m-%d %H:%M:%S')
 print ("\tChecking for collections updated since " + humanTime)
     
-output_path = "/media/SPE/collections"
-#output_path = "/media/SPE/collections-test"
+output_path = "/media/Library/SPE_Automated/collections"
+#output_path = "/media/Library/SPE_Automated/collections-test"
 pdf_path = "/media/Library/SPEwww/browse/pdf"
 staticData = os.path.join(output_path, "staticData")
 
