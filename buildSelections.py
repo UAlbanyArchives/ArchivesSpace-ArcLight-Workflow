@@ -11,7 +11,7 @@ def buildSelections(colID, refID=None, filter=None, date=False, verbose=False):
     collection = []
     page = 1
 
-    outDir = "/media/SPE/uploads"
+    outDir = "/media/Library/SPE_Uploads"
     
     if refID:
         url = "https://archives.albany.edu/catalog?f[record_parent_sim][]=" + refID + "&format=json&per_page=100"

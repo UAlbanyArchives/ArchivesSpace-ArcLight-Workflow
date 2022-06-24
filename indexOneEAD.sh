@@ -16,5 +16,5 @@ export REPOSITORY_ID=$AREA
 
 bundle exec traject -u https://solr2020.library.albany.edu:8984/solr/arclight2 -i xml \
 -c ~/.rvm/gems/ruby-2.6.5@arclight/bundler/gems/arclight-f9b61c2cf12c/lib/arclight/traject/ead2_config.rb \
-/media/SPE/collections/$AREA/$TYPE.xml
+/media/Library/SPE_Automated/collections/$AREA/$TYPE.xml
 
