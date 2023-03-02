@@ -11,7 +11,10 @@ def buildSelections(colID, refID=None, filter=None, date=False, verbose=False):
     collection = []
     page = 1
 
-    outDir = "/media/Library/SPE_Uploads"
+    if os.name == "nt":
+        outDir = "\\\\Lincoln\\Library\\SPE_Uploads"
+    else:
+        outDir = "/media/Library/SPE_Uploads"
     
     if refID:
         url = "https://archives.albany.edu/catalog?f[record_parent_sim][]=" + refID + "&format=json&per_page=100"
@@ -29,8 +32,8 @@ def buildSelections(colID, refID=None, filter=None, date=False, verbose=False):
     print (descriptionURL + "?format=json")
     r = requests.get(descriptionURL + "?format=json", verify=False)
     print (r.status_code)
-    with open(outDesc, 'w', encoding='utf-8', newline='') as f:
-        json.dump(r.json()["response"], f, ensure_ascii=True, indent=4)
+    #with open(outDesc, 'w', encoding='utf-8', newline='') as f:
+    #    json.dump(r.json()["response"], f, ensure_ascii=True, indent=4)
         
 
     def getPage(page, collection, url):
