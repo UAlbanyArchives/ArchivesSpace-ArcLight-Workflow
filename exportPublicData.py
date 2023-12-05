@@ -6,6 +6,7 @@ import time
 import csv
 import shutil
 from git import Repo
+import lxml.etree as etree
 from datetime import datetime
 from subprocess import Popen, PIPE, STDOUT
 import asnake.logging as logging
@@ -190,9 +191,11 @@ for colID in modifiedList:
                 print ("\t\t\tExporting EAD")
                 params = {"include_daos": True}
                 eadResponse = client.get("repositories/2/resource_descriptions/" + resourceID + ".xml", params=params)
+                xml = etree.parse.fromstring(eadResponse.text)
+                pretty_xml = etree.tostring(xml, pretty_print=True)
                 eadFile = os.path.join(eadDir, ID + ".xml")
                 f = open(eadFile, 'w', encoding='utf-8')
-                f.write(eadResponse.text)
+                f.write(pretty_xml)
                 f.close()
                 print ("\t\t\tSuccess!")
                 
