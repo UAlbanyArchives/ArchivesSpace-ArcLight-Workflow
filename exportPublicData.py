@@ -194,8 +194,8 @@ for colID in modifiedList:
                 xml = etree.fromstring(eadResponse.text.encode('utf-8'))
                 pretty_xml = etree.tostring(xml, pretty_print=True)
                 eadFile = os.path.join(eadDir, ID + ".xml")
-                f = open(eadFile, 'wb', encoding='utf-8')
-                f.write(pretty_xml)
+                f = open(eadFile, 'w', encoding='utf-8')
+                f.write(pretty_xml.decode("utf-8"))
                 f.close()
                 print ("\t\t\tSuccess!")
                 
