@@ -191,7 +191,7 @@ for colID in modifiedList:
                 print ("\t\t\tExporting EAD")
                 params = {"include_daos": True}
                 eadResponse = client.get("repositories/2/resource_descriptions/" + resourceID + ".xml", params=params)
-                xml = etree.fromstring(eadResponse.text.decode('utf-8'))
+                xml = etree.fromstring(eadResponse.text.encode('utf-8'))
                 pretty_xml = etree.tostring(xml, pretty_print=True)
                 eadFile = os.path.join(eadDir, ID + ".xml")
                 f = open(eadFile, 'w', encoding='utf-8')
