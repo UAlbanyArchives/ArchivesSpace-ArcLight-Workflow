@@ -229,7 +229,7 @@ try:
     run(["git", f"--git-dir={output_path}/.git", f"--work-tree={output_path}", "add", "."])
     run(["git", f"--git-dir={output_path}/.git", f"--work-tree={output_path}", "commit", "-m", "modified collections exported from ArchivesSpace"])
     run(["git", f"--git-dir={output_path}/.git", f"--work-tree={output_path}", "push", "origin", "main"])
-    print ("Successfully committed to Github.")
+    print ("\tSuccessfully committed to Github.")
 except Exception as e:
     print ("ERROR: unable to commit changes to Github")
     print (e)
@@ -255,7 +255,7 @@ print ("\tCalling script to generate static pages...")
 staticPages = os.path.join(__location__, "staticPages.py")
 
 #build command list
-print ("test only")
+#print ("test only")
 
 staticCmd = ["python3", staticPages]
 makeStatic = Popen(staticCmd, stdout=PIPE, stderr=PIPE)
