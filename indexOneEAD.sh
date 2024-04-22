@@ -5,6 +5,7 @@ TYPE="$1"
 # The user running this script must have an arclight rvm gemset with the correct gems
 # clone the arclight-UAlbany repo into your home dir and run 'bundle install' from there
 [ -s "~/.rvm/scripts/rvm" ] && . "~/.rvm/scripts/rvm"
+source "$HOME/.rvm/scripts/rvm"
 rvm 2.6.5@arclight
 
 cd ~/arclight-UAlbany
