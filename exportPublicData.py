@@ -229,6 +229,7 @@ try:
     run(["git", f"--git-dir={output_path}/.git", f"--work-tree={output_path}", "add", "."])
     run(["git", f"--git-dir={output_path}/.git", f"--work-tree={output_path}", "commit", "-m", "modified collections exported from ArchivesSpace"])
     run(["git", f"--git-dir={output_path}/.git", f"--work-tree={output_path}", "push", "origin", "main"])
+    print ("Successfully committed to Github.")
 except Exception as e:
     print ("ERROR: unable to commit changes to Github")
     print (e)
