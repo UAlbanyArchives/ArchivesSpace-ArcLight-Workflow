@@ -8,7 +8,7 @@ import shutil
 from git import Repo
 import lxml.etree as etree
 from datetime import datetime
-from subprocess import Popen, PIPE, STDOUT
+from subprocess import Popen, PIPE, STDOUT, run
 import asnake.logging as logging
 from asnake.client import ASnakeClient
 #from asnake.aspace import ASpace
@@ -221,11 +221,18 @@ for colID in modifiedList:
 
 #commit changes to git repo
 print ("\tCommiting changes to Github...")
-#print ("test only")
-repo = Repo(output_path)
-repo.git.add('.')
-repo.git.commit("-m", "modified collections exported from ArchivesSpace")
-repo.git.push('origin', 'master')
+try:
+    #repo = Repo(output_path)
+    #repo.git.add('.')
+    #repo.git.commit("-m", "modified collections exported from ArchivesSpace")
+    #repo.git.push('origin', 'master')
+    run(["git", f"--git-dir={output_path}/.git", f"--work-tree={output_path}", "add", "."])
+    run(["git", f"--git-dir={output_path}/.git", f"--work-tree={output_path}", "commit", "-m", "modified collections exported from ArchivesSpace"])
+    run(["git", f"--git-dir={output_path}/.git", f"--work-tree={output_path}", "push", "origin", "main"])
+except Exception as e:
+    print ("ERROR: unable to commit changes to Github")
+    print (e)
+
 
 
 print ("\tWriting static data back to files.")
